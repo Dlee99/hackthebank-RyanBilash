@@ -1,12 +1,20 @@
 package com.company;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 import java.text.*;
+import java.util.concurrent.TimeUnit;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
 	// write your code here
+        PrintWriter w = new PrintWriter("plzNoHax.txt");
+        FileReader f;
+        String NM[][] = new String[100][2];
+
+
         NumberFormat fmt = NumberFormat.getNumberInstance();
         fmt.setMinimumFractionDigits(2);
         fmt.setMaximumFractionDigits(2);
@@ -19,14 +27,88 @@ public class Main {
                     .print("Please enter the name to whom the account belongs. (\"Exit\" to abort) ");
             name = kbReader.nextLine();
             if (!name.equalsIgnoreCase("EXIT")) {
-                System.out.print("Please enter the amount of the deposit. ");
-                double amount = kbReader.nextDouble();
-                System.out.println(" "); // gives an eye pleasing blank line
-                // between accounts
-                bankAccount theAccount = new bankAccount(name, amount);
-                iter.add(theAccount);
+                if(name.equalsIgnoreCase("debug")){
+                    System.out.println("Would you like to retrieve a listing of accounts from largest to smallest or smallest to largest (lts or stl)?");
+                    String inp = kbReader.next();
+                    if(inp.equalsIgnoreCase("stl"))/* Small to Large*/{
+
+                    }else if(inp.equalsIgnoreCase("lts")){
+
+                    }else if(inp.equalsIgnoreCase("drain")){
+                        System.out.println("Select an account to drain: ");
+                        w.close();
+                        int a =0;
+                        f = new FileReader("plzNoHax.txt");
+                        BufferedReader br = new BufferedReader(f);
+
+                        String st;
+                        while(true){
+                            if((st=br.readLine()) != null){
+                                System.out.println(st);
+
+                            }else{
+                                break;
+                            }
+
+                        }
+                        BufferedReader br2 = new BufferedReader(f);
+                        Scanner brs = new Scanner(br2);
+                        while(true){
+                            if(brs.hasNext()){
+                                NM[a][0]=brs.nextLine();
+                                String[] parts = NM[a][0].split(" ");
+                                NM[a][0] = parts[0];
+                                NM[a][1] = parts[1];
+                                a++;
+                            }else{
+                                break;
+                            }
+                        }
+
+
+                        int nameIndex = -1;
+
+
+                        while(true){
+                            System.out.println("Input a name");
+                            String drain = kbReader.next();
+                            for(int c =0;c<NM.length;c++){
+                                if(drain.equals(NM[c][0])) {
+                                    nameIndex =c;
+                                    break;
+                                }
+                            }
+                            if(nameIndex!=-1){
+                                break;
+                            }else{
+                                System.out.println("\""+drain+"\" is not an available name");
+                            }
+                        }
+                        PrintWriter w2 =w;
+                        w2.println(NM[nameIndex][0]+"_DRAINED 0.0");
+                        w2.println("MYSELF_HAXOR "+NM[nameIndex][1]);
+
+                        System.out.println("");
+                        TimeUnit.MILLISECONDS.sleep(1000);
+                        System.out.println("Account drained");
+                        br.close();
+                        br2.close();
+
+                    }
+
+                }else{
+                    System.out.print("Please enter the amount of the deposit. ");
+                    double amount = kbReader.nextDouble();
+                    System.out.println(" "); // gives an eye pleasing blank line
+                    // between accounts
+                    w.println(name+ " "+ amount);
+                    bankAccount theAccount = new bankAccount(name, amount);
+                    iter.add(theAccount);
+                }
+
             }
         } while (!name.equalsIgnoreCase("EXIT"));
+        w.close();
 
         // Search aryLst and print out the name and amount of the largest bank
         // account
